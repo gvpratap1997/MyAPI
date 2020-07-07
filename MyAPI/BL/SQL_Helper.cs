@@ -93,6 +93,17 @@ namespace MyAPI.BL
             dbcmd.Parameters.AddWithValue("@id", id);
             dbcmd.ExecuteNonQuery();
             }
+        internal List<UserModel> FindByEmail()
+        {
+            var sql_con = new Npgsql.NpgsqlConnection("Host=localhost;Username=postgres;Password=SmartWork@123;Database=postgres");
+            sql_con.Open();
+            var commandText = "select * from pratap_sample";
+            var cmd = new Npgsql.NpgsqlCommand(commandText, sql_con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            List<UserModel> personList = new List<UserModel>();
+            personList = DataReaderMapToList<UserModel>(rdr);
+            return personList;
+        }
     }
 }
 
