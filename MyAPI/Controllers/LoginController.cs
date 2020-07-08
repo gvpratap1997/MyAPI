@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MyAPI.BL;
 using MyAPI.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace MyAPI.Controllers
 {
+    
     [Route("api/login")]
     [ApiController]
     public class LoginController : ControllerBase
@@ -22,9 +24,10 @@ namespace MyAPI.Controllers
             _config = config;
             instance = new SQL_Helper();
         }
+        
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Login([FromBody] Models.UserModel login)
+        public IActionResult Login([FromBody] UserModel login)
         {
             IActionResult response = Unauthorized();
             var user = AuthenticateUser(login);
@@ -32,7 +35,7 @@ namespace MyAPI.Controllers
             if (user != null)
             {
                 var tokenString = GenerateJSONWebToken(user);
-                response = Ok(new { token = tokenString });
+                response = Ok(new { token = tokenString , userdata = user.username});
             }
 
             return response;
@@ -61,7 +64,7 @@ namespace MyAPI.Controllers
             foreach(var data  in result)
             {
                 if(login.email == data.email && login.password == data.password){
-                    user = new UserModel { email = data.email, password = data.password };
+                    user = new UserModel { email = data.email, password = data.password, username = data.username };
                 }
             }
             return user;
